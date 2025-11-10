@@ -1,4 +1,3 @@
-
 import java.awt.*;
 import java.awt.geom.*;
 import javax.swing.*;
@@ -16,7 +15,8 @@ public class TelaInicial extends JFrame {
         setResizable(false);
 
         JPanel main = new JPanel(new BorderLayout());
-        main.setBackground(Color.GRAY.brighter().brighter());
+        // Fundo cinza escuro
+        main.setBackground(new Color(45, 45, 55));
         setContentPane(main);
 
         TitlePanel titlePanel = new TitlePanel();
@@ -73,22 +73,24 @@ public class TelaInicial extends JFrame {
     }
 
     private JButton createStyledButton(String text) {
-        Color bg = Color.BLUE.darker().darker();
+        // Fundo branco com texto rosa
+        Color textColor = new Color(255, 20, 147); // DeepPink
+        Color bg = Color.WHITE;
         JButton b = new JButton(text);
         b.setFont(b.getFont().deriveFont(Font.BOLD, 20f));
-        b.setForeground(Color.WHITE);
+        b.setForeground(textColor);
         b.setBackground(bg);
         b.setOpaque(true);
         b.setFocusPainted(false);
         b.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Color.DARK_GRAY, 2),
+                BorderFactory.createLineBorder(textColor, 2),
                 BorderFactory.createEmptyBorder(12, 20, 12, 20)
         ));
         b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         b.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                b.setBackground(bg.brighter());
+                b.setBackground(new Color(255, 240, 245)); // Rosa bem claro no hover
             }
 
             public void mouseExited(java.awt.event.MouseEvent evt) {
@@ -134,7 +136,7 @@ public class TelaInicial extends JFrame {
             g2.drawString(s2, x, y);
             x += fm.stringWidth(s2) + space;
 
-            g2.setColor(Color.GRAY);
+            g2.setColor(Color.LIGHT_GRAY);
             g2.drawString(s3, x, y);
 
             int marginTop = y + 12;
