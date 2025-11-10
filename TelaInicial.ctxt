@@ -1,10 +1,17 @@
 #BlueJ class context
 comment0.target=TelaInicial
-comment0.text=\r\n\ Escreva\ uma\ descri\u00E7\u00E3o\ da\ classe\ TelaInicial\ aqui.\r\n\ \r\n\ @author\ (seu\ nome)\ \r\n\ @version\ (um\ n\u00FAmero\ da\ vers\u00E3o\ ou\ uma\ data)\r\n
+comment0.text=\r\n\ TelaInicial\ \u00E9\ a\ janela\ principal\ (JFrame)\ do\ aplicativo.\r\n\ Exibe\ o\ menu\ e\ gerencia\ a\ transi\u00E7\u00E3o\ para\ o\ PainelDoJogo.\r\n
 comment1.params=
 comment1.target=TelaInicial()
-comment1.text=\r\n\ Construtor\ para\ objetos\ da\ classe\ TelaInicial\r\n
-comment2.params=y
-comment2.target=int\ sampleMethod(int)
-comment2.text=\r\n\ Um\ exemplo\ de\ um\ m\u00E9todo\ -\ substitua\ este\ coment\u00E1rio\ pelo\ seu\ pr\u00F3prio\r\n\ \r\n\ @param\ \ y\ \ \ um\ exemplo\ de\ um\ par\u00E2metro\ de\ m\u00E9todo\r\n\ @return\ \ \ \ \ a\ soma\ de\ x\ e\ y\ \r\n
-numComments=3
+comment1.text=\r\n\ Constr\u00F3i\ a\ janela\ principal\ e\ inicializa\ a\ tela\ de\ menu.\r\n
+comment2.params=text
+comment2.target=javax.swing.JButton\ createStyledButton(java.lang.String)
+comment2.text=\r\n\ M\u00E9todo\ "f\u00E1brica"\ (helper)\ para\ criar\ e\ estilizar\ um\ JButton.\r\n
+comment3.params=evt
+comment3.target=void\ mouseEntered(java.awt.event.MouseEvent)
+comment4.params=evt
+comment4.target=void\ mouseExited(java.awt.event.MouseEvent)
+comment5.params=args
+comment5.target=void\ main(java.lang.String[])
+comment5.text=\r\n\ Ponto\ de\ entrada\ (main)\ do\ programa.\r\n
+numComments=6

@@ -1,0 +1,19 @@
+#BlueJ class context
+comment0.target=PainelDoJogo
+comment0.text=\r\n\ PainelDoJogo\ \u00E9\ o\ componente\ Swing\ principal\ onde\ o\ jogo\ \u00E9\ renderizado\ e\ jogado.\r\n
+comment1.params=
+comment1.target=PainelDoJogo()
+comment1.text=\r\n\ Constr\u00F3i\ um\ novo\ PainelDoJogo.\r\n\ ****\ MUDAN\u00C7A\:\ O\ construtor\ n\u00E3o\ recebe\ mais\ o\ n\u00FAmero\ do\ n\u00EDvel\ ****\r\n
+comment2.params=
+comment2.target=void\ resetarNivel()
+comment2.text=\r\n\ Reseta\ o\ n\u00EDvel\ atual\ para\ seu\ estado\ inicial.\r\n\ Chamado\ pelo\ bot\u00E3o\ "Limpar".\r\n
+comment3.params=g
+comment3.target=void\ paintComponent(java.awt.Graphics)
+comment3.text=\r\n\ Sobrescreve\ o\ m\u00E9todo\ principal\ de\ desenho\ do\ JPanel.\r\n
+comment4.params=x\ y
+comment4.target=java.awt.Point\ converterPixelParaGrade(int,\ int)
+comment4.text=\r\n\ Converte\ coordenadas\ de\ pixel\ para\ grade.\r\n
+comment5.params=
+comment5.target=void\ apagarTracoAtual()
+comment5.text=\r\n\ Helper\ privado\ para\ cancelar\ o\ tra\u00E7o\ atual.\r\n
+numComments=6

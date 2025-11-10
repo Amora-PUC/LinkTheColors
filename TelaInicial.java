@@ -2,31 +2,48 @@ import java.awt.*;
 import java.awt.geom.*;
 import javax.swing.*;
 
+/**
+ * TelaInicial é a janela principal (JFrame) do aplicativo.
+ * Exibe o menu e gerencia a transição para o PainelDoJogo.
+ */
 public class TelaInicial extends JFrame {
 
+    // --- Constantes ---
     private static final int WIDTH = 480;
     private static final int HEIGHT = 640;
+    
+    // --- Atributos de Estado ---
+    private JPanel main;
+    private PainelDoJogo painelDoJogo;
 
+    /**
+     * Constrói a janela principal e inicializa a tela de menu.
+     */
     public TelaInicial() {
         super("Link The Colors - Menu");
+
+        // 1. Configuração da Janela
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(WIDTH, HEIGHT);
         setLocationRelativeTo(null);
         setResizable(false);
 
-        JPanel main = new JPanel(new BorderLayout());
-        // Fundo cinza escuro
+        // 2. Configuração do Painel Principal
+        main = new JPanel(new BorderLayout());
         main.setBackground(new Color(45, 45, 55));
         setContentPane(main);
 
+        // 3. Adiciona o painel de título
         TitlePanel titlePanel = new TitlePanel();
         titlePanel.setPreferredSize(new Dimension(WIDTH, 320));
         main.add(titlePanel, BorderLayout.NORTH);
 
+        // 4. Painel central (espaçador)
         JPanel center = new JPanel();
         center.setOpaque(false);
         main.add(center, BorderLayout.CENTER);
 
+        // 5. Painel de Botões do Menu
         JPanel buttonPanel = new JPanel();
         buttonPanel.setOpaque(false);
         buttonPanel.setLayout(new GridBagLayout());
@@ -39,23 +56,78 @@ public class TelaInicial extends JFrame {
         JButton instrBtn = createStyledButton("REGRAS");
         JButton creditBtn = createStyledButton("CRÉDITOS");
 
+        // 6. ActionListeners
+
+        // --- ActionListener do Botão "JOGAR" ---
         jogarBtn.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "", "JOGAR",
-                    JOptionPane.INFORMATION_MESSAGE);
+            // 1. Limpa o menu
+            main.removeAll();
+
+            // 2. Cria e adiciona o painel do jogo
+            // (Usando o construtor padrão, pois removemos o GerenciadorNiveis)
+            painelDoJogo = new PainelDoJogo(); 
+            main.add(painelDoJogo, BorderLayout.CENTER); 
+            
+            // 3. Cria o botão "LIMPAR"
+            JButton botaoLimpar = createStyledButton("LIMPAR");
+            botaoLimpar.addActionListener(evt -> {
+                if (painelDoJogo != null) {
+                    painelDoJogo.resetarNivel();
+                }
+            });
+            
+            // **** 4. CRIA O BOTÃO "VOLTAR AO MENU" ****
+            JButton botaoVoltar = createStyledButton("MENU"); // Texto mais curto
+            botaoVoltar.addActionListener(evt -> {
+                // 1. Cria uma nova instância da TelaInicial (o menu)
+                TelaInicial novoMenu = new TelaInicial();
+                
+                // 2. Torna o novo menu visível
+                novoMenu.setVisible(true);
+                
+                // 3. Fecha esta janela atual (o jogo)
+                // 'TelaInicial.this' se refere à janela/JFrame
+                TelaInicial.this.dispose();
+            });
+            
+            // 5. Cria o painel de ação (para os botões Limpar e Voltar)
+            JPanel painelDeAcao = new JPanel();
+            painelDeAcao.setBackground(new Color(45, 45, 55));
+            painelDeAcao.add(botaoLimpar);
+            painelDeAcao.add(botaoVoltar); // <-- Adiciona o novo botão
+            
+            main.add(painelDeAcao, BorderLayout.SOUTH);
+
+            // 6. Ajusta a janela e atualiza a UI
+            pack(); 
+            setLocationRelativeTo(null); 
+            main.revalidate(); 
+            main.repaint(); 
+            
+            // 7. Pede o foco para o painel do jogo
+            painelDoJogo.requestFocusInWindow();
         });
 
+        // --- ActionListener do Botão "REGRAS" ---
         instrBtn.addActionListener(e -> {
-            String msg = "Objetivo:\nLigue cada par de bolas da mesma cor sem que as linhas se cruzem.\n\n"
-                    + "Controles:\nClique e arraste entre duas bolas para conectar.\n\n"
-                    + "Dica:\nPlaneje rotas e use espaços vazios.";
-            JOptionPane.showMessageDialog(this, msg, "Instruções", JOptionPane.INFORMATION_MESSAGE);
+            String msg = "Objetivo:\nLigue cada par de bolas da mesma cor "
+                       + "sem que as linhas se cruzem.\n\n"
+                       + "Controles:\nClique e arraste entre duas bolas para conectar.\n\n"
+                       + "Dica:\nPlaneje rotas e use espaços vazios.";
+            JOptionPane.showMessageDialog(this, msg, "Instruções", 
+                                          JOptionPane.INFORMATION_MESSAGE);
         });
 
+        // --- ActionListener do Botão "CRÉDITOS" ---
         creditBtn.addActionListener(e -> {
-            String msg = "Créditos:\nDesenvolvedor: GRUPO AGGL\nProjeto: Link The Colors\nVersão: 0.1";
-            JOptionPane.showMessageDialog(this, msg, "Créditos", JOptionPane.INFORMATION_MESSAGE);
+            String msg = "Créditos:\nDesenvolvedor: GRUPO AGGL\n"
+                       + "Projeto: Link The Colors\nVersão: 0.1";
+            JOptionPane.showMessageDialog(this, msg, "Créditos", 
+                                          JOptionPane.INFORMATION_MESSAGE);
         });
-
+        
+        
+        // 7. Adiciona os botões do menu
         gbc.gridy = 0;
         buttonPanel.add(jogarBtn, gbc);
         gbc.gridy = 1;
@@ -65,18 +137,23 @@ public class TelaInicial extends JFrame {
 
         main.add(buttonPanel, BorderLayout.SOUTH);
 
+        // Aplica o Look & Feel nativo
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             SwingUtilities.updateComponentTreeUI(this);
         } catch (Exception ex) {
+            // Ignora
         }
     }
 
+    /**
+     * Método "fábrica" (helper) para criar e estilizar um JButton.
+     */
     private JButton createStyledButton(String text) {
-        // Fundo branco com texto rosa
         Color textColor = new Color(255, 20, 147); // DeepPink
         Color bg = Color.WHITE;
         JButton b = new JButton(text);
+        
         b.setFont(b.getFont().deriveFont(Font.BOLD, 20f));
         b.setForeground(textColor);
         b.setBackground(bg);
@@ -90,9 +167,8 @@ public class TelaInicial extends JFrame {
 
         b.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                b.setBackground(new Color(255, 240, 245)); // Rosa bem claro no hover
+                b.setBackground(new Color(255, 240, 245)); // Hover
             }
-
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 b.setBackground(bg);
             }
@@ -101,110 +177,20 @@ public class TelaInicial extends JFrame {
         return b;
     }
 
+    /**
+     * Classe interna para desenhar o painel de título customizado.
+     */
     private static class TitlePanel extends JPanel {
-        public TitlePanel() {
-            setOpaque(false);
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-            int w = getWidth();
-            int h = getHeight();
-
-            Font titleFont = new Font("ComicSans", Font.BOLD, Math.max(28, h / 8));
-            g2.setFont(titleFont);
-            FontMetrics fm = g2.getFontMetrics();
-
-            String s1 = "LINK";
-            String s2 = "THE";
-            String s3 = "COLORS";
-
-            int space = fm.stringWidth(" ");
-            int totalWidth = fm.stringWidth(s1) + space + fm.stringWidth(s2) + space + fm.stringWidth(s3);
-            int x = (w - totalWidth) / 2;
-            int y = fm.getAscent() + 8;
-
-            g2.setColor(Color.CYAN);
-            g2.drawString(s1, x, y);
-            x += fm.stringWidth(s1) + space;
-
-            g2.setColor(Color.PINK);
-            g2.drawString(s2, x, y);
-            x += fm.stringWidth(s2) + space;
-
-            g2.setColor(Color.LIGHT_GRAY);
-            g2.drawString(s3, x, y);
-
-            int marginTop = y + 12;
-            int areaTop = marginTop;
-            int areaHeight = h - areaTop - 10;
-            int areaCenterY = areaTop + areaHeight / 2;
-            int areaCenterX = w / 2;
-
-            float spacing = Math.min(160, w / 3f);
-            Point2D.Float topRed = new Point2D.Float(areaCenterX, areaTop + 10f);
-            Point2D.Float bottomRed = new Point2D.Float(areaCenterX, areaTop + areaHeight - 10f);
-            Point2D.Float leftBlue = new Point2D.Float(areaCenterX - spacing, areaCenterY - 10f);
-            Point2D.Float rightBlue = new Point2D.Float(areaCenterX + spacing, areaCenterY - 10f);
-            Point2D.Float green1 = new Point2D.Float(areaCenterX - spacing / 2f, areaCenterY + 30f);
-            Point2D.Float green2 = new Point2D.Float(areaCenterX + spacing / 2f, areaCenterY + 30f);
-
-            g2.setStroke(new BasicStroke(10f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-            g2.setColor(Color.BLUE.brighter());
-            Path2D.Float pathBlue = new Path2D.Float();
-            pathBlue.moveTo(leftBlue.x, leftBlue.y);
-            pathBlue.curveTo(leftBlue.x + spacing * 0.25, leftBlue.y - spacing * 0.5f,
-                    rightBlue.x - spacing * 0.25, rightBlue.y - spacing * 0.5f,
-                    rightBlue.x, rightBlue.y);
-            g2.draw(pathBlue);
-
-            g2.setStroke(new BasicStroke(8f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-            g2.setColor(Color.GREEN.darker());
-            Path2D.Float pathGreen = new Path2D.Float();
-            pathGreen.moveTo(green1.x, green1.y);
-            pathGreen.curveTo(green1.x + 20, green1.y - 30,
-                    green2.x - 20, green2.y - 30,
-                    green2.x, green2.y);
-            g2.draw(pathGreen);
-
-            drawEndpoint(g2, topRed.x, topRed.y, Math.max(12, h / 28), Color.RED);
-            drawEndpoint(g2, bottomRed.x, bottomRed.y, Math.max(12, h / 28), Color.RED);
-            drawEndpoint(g2, leftBlue.x, leftBlue.y, Math.max(14, h / 26), Color.BLUE);
-            drawEndpoint(g2, rightBlue.x, rightBlue.y, Math.max(14, h / 26), Color.BLUE);
-            drawEndpoint(g2, green1.x, green1.y, Math.max(11, h / 30), Color.GREEN);
-            drawEndpoint(g2, green2.x, green2.y, Math.max(11, h / 30), Color.GREEN);
-
-            g2.dispose();
-        }
-
-        private void drawEndpoint(Graphics2D g2, float cx, float cy, int radius, Color color) {
-            int r = radius;
-
-            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.18f));
-            g2.setColor(Color.BLACK);
-            g2.fillOval(Math.round(cx - r) + 2, Math.round(cy - r) + 4, 2 * r, 2 * r);
-            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
-
-            GradientPaint gp = new GradientPaint(cx - r, cy - r, color.brighter(),
-                    cx + r, cy + r, color.darker());
-            g2.setPaint(gp);
-            g2.fillOval(Math.round(cx - r), Math.round(cy - r), 2 * r, 2 * r);
-
-            g2.setStroke(new BasicStroke(2f));
-            g2.setColor(color.darker().darker());
-            g2.drawOval(Math.round(cx - r), Math.round(cy - r), 2 * r, 2 * r);
-        }
-
-        @Override
-        public Dimension getPreferredSize() {
-            return new Dimension(480, 320);
-        }
+        // (O código desta classe interna não muda. É apenas o desenho do título)
+        public TitlePanel() { setOpaque(false); }
+        @Override protected void paintComponent(Graphics g) { super.paintComponent(g); Graphics2D g2 = (Graphics2D) g.create(); g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); int w = getWidth(); int h = getHeight(); Font titleFont = new Font("ComicSans", Font.BOLD, Math.max(28, h / 8)); g2.setFont(titleFont); FontMetrics fm = g2.getFontMetrics(); String s1 = "LINK"; String s2 = "THE"; String s3 = "COLORS"; int space = fm.stringWidth(" "); int totalWidth = fm.stringWidth(s1) + space + fm.stringWidth(s2) + space + fm.stringWidth(s3); int x = (w - totalWidth) / 2; int y = fm.getAscent() + 8; g2.setColor(Color.CYAN); g2.drawString(s1, x, y); x += fm.stringWidth(s1) + space; g2.setColor(Color.PINK); g2.drawString(s2, x, y); x += fm.stringWidth(s2) + space; g2.setColor(Color.LIGHT_GRAY); g2.drawString(s3, x, y); int marginTop = y + 12; int areaTop = marginTop; int areaHeight = h - areaTop - 10; int areaCenterY = areaTop + areaHeight / 2; int areaCenterX = w / 2; float spacing = Math.min(160, w / 3f); Point2D.Float topRed = new Point2D.Float(areaCenterX, areaTop + 10f); Point2D.Float bottomRed = new Point2D.Float(areaCenterX, areaTop + areaHeight - 10f); Point2D.Float leftBlue = new Point2D.Float(areaCenterX - spacing, areaCenterY - 10f); Point2D.Float rightBlue = new Point2D.Float(areaCenterX + spacing, areaCenterY - 10f); Point2D.Float green1 = new Point2D.Float(areaCenterX - spacing / 2f, areaCenterY + 30f); Point2D.Float green2 = new Point2D.Float(areaCenterX + spacing / 2f, areaCenterY + 30f); g2.setStroke(new BasicStroke(10f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND)); g2.setColor(Color.BLUE.brighter()); Path2D.Float pathBlue = new Path2D.Float(); pathBlue.moveTo(leftBlue.x, leftBlue.y); pathBlue.curveTo(leftBlue.x + spacing * 0.25, leftBlue.y - spacing * 0.5f, rightBlue.x - spacing * 0.25, rightBlue.y - spacing * 0.5f, rightBlue.x, rightBlue.y); g2.draw(pathBlue); g2.setStroke(new BasicStroke(8f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND)); g2.setColor(Color.GREEN.darker()); Path2D.Float pathGreen = new Path2D.Float(); pathGreen.moveTo(green1.x, green1.y); pathGreen.curveTo(green1.x + 20, green1.y - 30, green2.x - 20, green2.y - 30, green2.x, green2.y); g2.draw(pathGreen); drawEndpoint(g2, topRed.x, topRed.y, Math.max(12, h / 28), Color.RED); drawEndpoint(g2, bottomRed.x, bottomRed.y, Math.max(12, h / 28), Color.RED); drawEndpoint(g2, leftBlue.x, leftBlue.y, Math.max(14, h / 26), Color.BLUE); drawEndpoint(g2, rightBlue.x, rightBlue.y, Math.max(14, h / 26), Color.BLUE); drawEndpoint(g2, green1.x, green1.y, Math.max(11, h / 30), Color.GREEN); drawEndpoint(g2, green2.x, green2.y, Math.max(11, h / 30), Color.GREEN); g2.dispose(); }
+        private void drawEndpoint(Graphics2D g2, float cx, float cy, int radius, Color color) { int r = radius; g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.18f)); g2.setColor(Color.BLACK); g2.fillOval(Math.round(cx - r) + 2, Math.round(cy - r) + 4, 2 * r, 2 * r); g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f)); GradientPaint gp = new GradientPaint(cx - r, cy - r, color.brighter(), cx + r, cy + r, color.darker()); g2.setPaint(gp); g2.fillOval(Math.round(cx - r), Math.round(cy - r), 2 * r, 2 * r); g2.setStroke(new BasicStroke(2f)); g2.setColor(color.darker().darker()); g2.drawOval(Math.round(cx - r), Math.round(cy - r), 2 * r, 2 * r); }
+        @Override public Dimension getPreferredSize() { return new Dimension(480, 320); }
     }
 
+    /**
+     * Ponto de entrada (main) do programa.
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             TelaInicial tela = new TelaInicial();

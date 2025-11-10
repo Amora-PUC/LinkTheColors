@@ -1,79 +1,89 @@
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Point; // Importar a classe Point
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Matriz é a classe "cérebro" do jogo.
+ * Armazena a grade lógica e os objetos do jogo (Bolas, Traços).
+ */
 public class Matriz {
 
     // --- 1. Atributos ---
     private int[][] gradeLogica;
     private int linhas;
     private int colunas;
-    private int tamanhoCelula; // Em pixels
+    private int tamanhoCelula;
 
-    private List<Bolas> listaDeBolas; //
+    private List<Bolas> listaDeBolas;
     private List<Traco> tracosCompletos;
 
     // --- 2. Métodos ---
 
     /**
-     * Construtor
+     * Constrói uma nova Matriz com as dimensões especificadas.
      */
     public Matriz(int linhas, int colunas, int tamanhoCelula) {
         this.linhas = linhas;
         this.colunas = colunas;
         this.tamanhoCelula = tamanhoCelula;
 
-        this.gradeLogica = new int[linhas][colunas]; // Inicia com 0 (vazio)
-        this.listaDeBolas = new ArrayList<>(); //
+        this.gradeLogica = new int[linhas][colunas];
+        this.listaDeBolas = new ArrayList<>();
         this.tracosCompletos = new ArrayList<>();
     }
-    
+
     /**
-     * Limpa a grade e as listas para carregar um novo nível.
+     * Limpa completamente a matriz para carregar um nível.
      */
     public void limparTudo() {
-        // Zera a grade lógica
         for (int i = 0; i < linhas; i++) {
             for (int j = 0; j < colunas; j++) {
                 gradeLogica[i][j] = 0; // 0 = Vazio
             }
         }
-        // Limpa as listas de objetos
-        listaDeBolas.clear(); //
+        listaDeBolas.clear();
         tracosCompletos.clear();
     }
 
     /**
-     * Carrega um nível (exemplo simples).
-     * Na prática, você leria isso de um arquivo ou um objeto "Nivel".
+     * **** MÉTODO RESTAURADO ****
+     * Carrega um nível de exemplo fixo (hardcoded).
+     * Como não há GerenciadorNiveis, os dados do nível ficam aqui.
      */
     public void carregarNivelExemplo() {
+        // 1. Limpa o tabuleiro
         limparTudo();
         
+        // 2. Adiciona as bolas do nível
+        // Você pode alterar este nível como quiser
+        
         // Par Vermelho (ID 1)
-        adicionarBola(new Bolas(0, 1, 1, Color.RED)); //
-        adicionarBola(new Bolas(4, 3, 1, Color.RED)); //
+        adicionarBola(new Bolas(0, 5, 1, Color.RED));
+        adicionarBola(new Bolas(8, 5, 1, Color.RED));
         
         // Par Azul (ID 2)
-        adicionarBola(new Bolas(1, 1, 2, Color.BLUE)); //
-        adicionarBola(new Bolas(3, 4, 2, Color.BLUE)); //
+        adicionarBola(new Bolas(5, 0, 2, Color.BLUE));
+        adicionarBola(new Bolas(5, 8, 2, Color.BLUE));
+        
+
     }
     
-    // Método privado para ajudar a carregar o nível
-    private void adicionarBola(Bolas bola) { //
-        listaDeBolas.add(bola); //
-        // MUITO IMPORTANTE: Atualiza a grade lógica
-        gradeLogica[bola.getLinha()][bola.getColuna()] = bola.getCorID(); //
+    
+    /**
+     * Helper privado para adicionar uma bola e atualizar a grade.
+     */
+    private void adicionarBola(Bolas bola) {
+        listaDeBolas.add(bola);
+        gradeLogica[bola.getLinha()][bola.getColuna()] = bola.getCorID();
     }
 
-
     /**
-     * Desenha todos os componentes permanentes da matriz.
+     * Desenha todos os componentes visuais gerenciados pela Matriz.
      */
     public void desenhar(Graphics g) {
-        // 1. Desenhar linhas da grade (opcional, mas bom para debug)
+        // 1. Desenhar linhas da grade
         g.setColor(Color.DARK_GRAY);
         for (int i = 0; i <= linhas; i++) {
             g.drawLine(0, i * tamanhoCelula, colunas * tamanhoCelula, i * tamanhoCelula);
@@ -84,12 +94,12 @@ public class Matriz {
 
         // 2. Desenhar os traços completos
         for (Traco traco : tracosCompletos) {
-            traco.desenhar(g, tamanhoCelula); //
+            traco.desenhar(g, tamanhoCelula);
         }
         
-        // 3. Desenhar as bolas (por cima dos traços)
-        for (Bolas bola : listaDeBolas) { //
-            bola.desenhar(g, tamanhoCelula); //
+        // 3. Desenhar as bolas
+        for (Bolas bola : listaDeBolas) {
+            bola.desenhar(g, tamanhoCelula);
         }
     }
     
@@ -97,7 +107,7 @@ public class Matriz {
     
     public int getEstado(int linha, int coluna) {
         if (!isPosicaoValida(linha, coluna)) {
-            return -1; // Posição inválida (código de erro)
+            return -1;
         }
         return gradeLogica[linha][coluna];
     }
@@ -108,69 +118,52 @@ public class Matriz {
         }
     }
     
-    public Bolas getBolaEm(int linha, int coluna) { //
+    public Bolas getBolaEm(int linha, int coluna) {
         if (!isPosicaoValida(linha, coluna)) {
             return null;
         }
-        // Procura na lista de bolas
-        for (Bolas bola : listaDeBolas) { //
-            if (bola.getLinha() == linha && bola.getColuna() == coluna) { //
-                return bola; //
+        for (Bolas bola : listaDeBolas) {
+            if (bola.getLinha() == linha && bola.getColuna() == coluna) {
+                return bola;
             }
         }
-        return null; // Nenhuma bola encontrada
+        return null;
     }
 
     public boolean isPosicaoValida(int linha, int coluna) {
         return linha >= 0 && linha < linhas && coluna >= 0 && coluna < colunas;
     }
     
-    /**
-     * Adiciona um traço completo e atualiza o estado das bolas conectadas.
-     * **** MÉTODO ATUALIZADO ****
-     */
     public void adicionarTracoCompleto(Traco traco) {
-        tracosCompletos.add(traco); //
+        tracosCompletos.add(traco);
         
-        // Pega o ponto inicial e final do traço
-        Point pInicial = traco.getPontosDoCaminho().get(0); //
-        Point pFinal = traco.getUltimoPonto(); //
+        Point pInicial = traco.getPontosDoCaminho().get(0);
+        Point pFinal = traco.getUltimoPonto();
 
-        // Encontra as bolas nessas posições e as marca como conectadas
-        Bolas bola1 = getBolaEm(pInicial.y, pInicial.x); //
-        Bolas bola2 = getBolaEm(pFinal.y, pFinal.x); //
+        Bolas bola1 = getBolaEm(pInicial.y, pInicial.x);
+        Bolas bola2 = getBolaEm(pFinal.y, pFinal.x);
 
         if (bola1 != null) {
-            bola1.setEstaConectada(true); //
+            bola1.setEstaConectada(true);
         }
         if (bola2 != null) {
-            bola2.setEstaConectada(true); //
+            bola2.setEstaConectada(true);
         }
     }
     
-    /**
-     * Limpa um traço da grade lógica, resetando as células para 0 (vazio)
-     * ou para o ID da bola.
-     * **** MÉTODO NOVO ****
-     */
     public void limparTracoDaGrade(Traco traco) {
         if (traco == null) return;
         
-        List<Point> pontos = traco.getPontosDoCaminho(); //
+        List<Point> pontos = traco.getPontosDoCaminho();
         
-        // Itera por todos os pontos do caminho
         for (Point p : pontos) {
-            // Verifica se é uma bola
-            Bolas bola = getBolaEm(p.y, p.x); //
+            Bolas bola = getBolaEm(p.y, p.x);
             
             if (bola != null) {
-                // Se for uma bola, reseta o estado para o ID da cor
-                gradeLogica[p.y][p.x] = bola.getCorID(); //
+                gradeLogica[p.y][p.x] = bola.getCorID();
             } else {
-                // Se for um caminho, reseta para VAZIO
-                gradeLogica[p.y][p.x] = 0; 
+                gradeLogica[p.y][p.x] = 0;
             }
         }
     }
-    
 }
