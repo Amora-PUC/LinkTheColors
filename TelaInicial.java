@@ -162,14 +162,6 @@ public class TelaInicial extends JFrame {
                     rightBlue.x, rightBlue.y);
             g2.draw(pathBlue);
 
-            g2.setColor(Color.MAGENTA.darker());
-            Path2D.Float pathPink = new Path2D.Float();
-            pathPink.moveTo(rightBlue.x, rightBlue.y + 18);
-            pathPink.curveTo(rightBlue.x - spacing * 0.3, rightBlue.y + spacing * 0.6f,
-                    leftBlue.x + spacing * 0.3, leftBlue.y + spacing * 0.6f,
-                    leftBlue.x, leftBlue.y + 18);
-            g2.draw(pathPink);
-
             g2.setStroke(new BasicStroke(8f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
             g2.setColor(Color.GREEN.darker());
             Path2D.Float pathGreen = new Path2D.Float();
